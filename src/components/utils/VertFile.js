@@ -264,6 +264,7 @@ export function synchJumpsAndStats(vertObjects, match)
     for (var nv=0; nv<vertObjects.length; nv++)
     {
         var vobj = vertObjects[nv]
+        if (vobj.selectPlayer === undefined) continue;
         vobj.jumpevents = []
         vobj.events = []
         for (var ne=0; ne<match.events.length; ne++)
