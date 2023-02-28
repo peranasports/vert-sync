@@ -300,7 +300,7 @@ function bestFitTimesForPlayer(vpo, threshold)
 {
     var times = [];
     var spikeEvents = vpo.jumpevents;
-    if (spikeEvents.length == 0)
+    if (spikeEvents === undefined || spikeEvents.length == 0)
     {
         return [];
     }

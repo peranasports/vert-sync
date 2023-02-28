@@ -124,7 +124,7 @@ function SynchScreen() {
       for (var no=0; no<vobjs.length; no++)
       {
         const vobj = vobjs[no]
-        if (vobj.selectPlayer.Guid === pl.Guid)
+        if (vobj.selectPlayer !== undefined && vobj.selectPlayer.Guid === pl.Guid)
         {
           pl.isVert = true
           break
@@ -138,7 +138,7 @@ function SynchScreen() {
       for (var no=0; no<vobjs.length; no++)
       {
         const vobj = vobjs[no]
-        if (vobj.selectPlayer.Guid === pl.Guid)
+        if (vobj.selectPlayer !== undefined && vobj.selectPlayer.Guid === pl.Guid)
         {
           pl.isVert = true
           break
@@ -154,6 +154,14 @@ function SynchScreen() {
       return vobj.selectPlayer.shirtNumber + ". " + vobj.selectPlayer.LastName;
     } else {
       return "Select Player";
+    }
+  };
+
+  const classNameSelectedPlayer = (vobj) => {
+    if (vobj.selectPlayer !== undefined) {
+      return "btn btn-success";
+    } else {
+      return "btn btn-error";
     }
   };
 
@@ -176,7 +184,7 @@ function SynchScreen() {
               <p className="pl-2 pt-2 text-lg font-semibold">
                 {vobj.playerName}
               </p>
-              <label htmlFor="my-modal-6" className="btn" onClick={() => setSelectedVertObject(vobj)}>
+              <label htmlFor="my-modal-6" className={classNameSelectedPlayer(vobj)} onClick={() => setSelectedVertObject(vobj)}>
                 {buttonSelectedPlayer(vobj)}
               </label>
               {/* <button className="btn btn-sm btn-secondary" onClick={() => selectPlayer()}>
@@ -195,14 +203,16 @@ function SynchScreen() {
 
       <input type="checkbox" id="my-modal-6" className="modal-toggle" />
       <div className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box w-11/12 max-w-5xl">
-          <div className="flex justify-between">
+        <div className="modal-box w-11/12 max-w-5xl h-full">
+          <p>Select the player in DVW file that matches {selectedVertObject.playerName}</p>
+          <div className="flex justify-between mt-2">
             <div className="">
               <h3 className="font-bold text-lg">{match.teamA.Name}</h3>
-              <div className="flex-col h-40 overflow-y-auto">
+              <div className="flex-col h-full overflow-y-auto">
                 {match.teamA.players.map((player, id) => (
                   <div
-                    className="mb-1 rounded-sm card bg-base-200 hover:bg-base-300"
+                    key={id}
+                    className="mb-1 rounded-sm card h-7 bg-base-200 hover:bg-base-300"
                     onClick={() => doSelectPlayer(player)}
                   >
                     {player.shirtNumber}. {player.LastName}
@@ -212,10 +222,11 @@ function SynchScreen() {
             </div>
             <div className="">
               <h3 className="font-bold text-lg">{match.teamB.Name}</h3>
-              <div className="flex-col h-40 overflow-y-auto">
+              <div className="flex-col h-full overflow-y-auto">
                 {match.teamB.players.map((player, id) => (
                   <div
-                    className="mb-1 rounded-sm card bg-base-200 hover:bg-base-300"
+                  key={id}
+                  className="mb-1 rounded-sm card h-7 bg-base-200 hover:bg-base-300"
                     onClick={() => doSelectPlayer(player)}
                   >
                     {player.shirtNumber}. {player.LastName}
