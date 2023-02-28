@@ -79,6 +79,7 @@ function SynchScreen() {
         xvos.push(xvo)
     }
     savePlayerMatching(xvos)
+    document.getElementById('my-modal-6').checked = false;
   };
 
   useEffect(() => {
@@ -240,7 +241,7 @@ function SynchScreen() {
           </div>
           <div className="modal-action">
             <label htmlFor="my-modal-6" className="btn">
-              Done
+              Close
             </label>
           </div>
         </div>
