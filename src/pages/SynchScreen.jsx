@@ -204,7 +204,10 @@ function SynchScreen() {
       <input type="checkbox" id="my-modal-6" className="modal-toggle" />
       <div className="modal modal-bottom sm:modal-middle">
         <div className="modal-box w-11/12 max-w-5xl h-full">
-          <p>Select the player in DVW file that matches {selectedVertObject.playerName}</p>
+          {
+            selectedVertObject === null ? <></> :
+            <p>Select the player in DVW file that matches {selectedVertObject.playerName}</p>
+          }
           <div className="flex justify-between mt-2">
             <div className="">
               <h3 className="font-bold text-lg">{match.teamA.Name}</h3>
