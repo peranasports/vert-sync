@@ -235,7 +235,7 @@ function Home() {
           </div>
         </div>
 
-        <div className="mx-4 my-10 w-100 h-full">
+        {/* <div className="mx-4 my-10 w-100 h-full">
           <p>OR SELECT VSS PACKAGES</p>
           <div>
             <div className="flex my-4">
@@ -282,7 +282,7 @@ function Home() {
             </button>
 
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );
