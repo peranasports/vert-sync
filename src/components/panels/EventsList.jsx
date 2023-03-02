@@ -115,7 +115,8 @@ function EventsList({ match, filters, selectedSet, doSelectEvent }) {
           const jh = Number.parseInt(e.vertData.vertinches / 10) + 1
           if (jumpheights.includes(jh) === false && jumpheights.includes(0) === false) continue;
 
-          const li = Number.parseInt(e.vertData.landingstress / 10) + 1
+          var li = Number.parseInt(e.vertData.landingpeakgs / 10) + 1
+          if (li > 3) li = 3
           if (landingimpacts.includes(li) === false && landingimpacts.includes(0) === false) continue;
         }
         fes.push(e)
@@ -155,8 +156,10 @@ function EventsList({ match, filters, selectedSet, doSelectEvent }) {
 
   return (
     <>
-      {match.sets.map((set, id) => (
+    <div className="bg-gray-800">
+    {match.sets.map((set, id) => (
         <div
+          key={id}
           tabIndex={0}
           className="collapse collapse-arrow collapse-open border border-base-300 bg-base-500"
         >
@@ -181,6 +184,7 @@ function EventsList({ match, filters, selectedSet, doSelectEvent }) {
           </div>
         </div>
       ))}
+    </div>
     </>
   );
 }

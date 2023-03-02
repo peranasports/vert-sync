@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import SynchScreen from "./pages/SynchScreen";
 import VideoStatsVert from "./pages/VideoStatsVert";
+import VertStatsReport from "./pages/VertStatsReport";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/synchscreen" element={<SynchScreen />} />
               <Route path="/videostatsvert" element={<VideoStatsVert />} />
+              <Route path="/vertstatsreport" element={<VertStatsReport />} />
               <Route path="/*" element={<NotFound />} />
             </Routes>
           </main>

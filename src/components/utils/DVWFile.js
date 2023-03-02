@@ -259,7 +259,7 @@ export function generateMatch(str) {
                 var mhs = parseInt(match.HomeScore);
                 var mas = parseInt(match.AwayScore);
                 var winningscore = gamenumber > 4 ? 15 : 25;
-                if (xhomescore >= winningscore || xhomescore >= winningscore) {
+                if (xhomescore >= winningscore || xawayscore >= winningscore) {
                   if (xhomescore > xawayscore + 1) {
                     mhs++;
                   } else if (xawayscore > xhomescore + 1) {

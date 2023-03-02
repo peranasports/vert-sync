@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ReactPlayer from "react-player/lazy";
 import EventsList from "../components/panels/EventsList";
+import VertStatsReport from "./VertStatsReport";
 import { toast } from "react-toastify";
 import Select from "react-select";
+import { saveToPC, dateToYYYYMMDD, dateToString, matchScoresString } from "../components/utils/Utils";
 
 function VideoStatsVert() {
+  const navigate = useNavigate();
   const location = useLocation();
   const {
     match,
@@ -13,6 +16,8 @@ function VideoStatsVert() {
     videoFileUrl,
     videoFileName,
     onlineVideoFileUrl,
+    dvFileData,
+    vertFileData,
   } = location.state;
   const [videoUrl, setVideoUrl] = useState(null);
   const [videoName, setVideoName] = useState(null);
@@ -87,6 +92,15 @@ function VideoStatsVert() {
     }
   };
 
+  const onReport = (vobj) =>
+  {
+    const st = {
+      match:match,
+      vertObject: vobj,
+    };
+    navigate("/vertstatsreport", { state: st });
+  }
+
   const onSynchVideo = () => {
     if (selectedEvent === null) {
       toast.error("Please select an event to synch with video!");
@@ -104,6 +118,27 @@ function VideoStatsVert() {
       secondsSinceEpoch.toString()
     );
   };
+
+  const onExport = () => {
+    var opms = []
+    for (var nn=0; nn<vertObjects.length; nn++)
+    {
+      const opm = { playerName: vertObjects[nn].playerName, selectedPlayerName: vertObjects[nn].selectPlayer.FirstName + " " + vertObjects[nn].selectPlayer.LastName}
+      opms.push(opm)
+    }
+    const dd = {
+      matchDescription:match.teamA.Name + " vs " + match.teamB.Name,
+      matchDate:dateToString(match.TrainingDate),
+      matchScores:matchScoresString(match),
+      onlineVideoFileUrl:onlineVideoFileUrl === null ? "" : onlineVideoFileUrl,
+      dvFileData:dvFileData,
+      vertFileData:vertFileData,
+      matchingNames:opms,
+    }    
+    const fileData = JSON.stringify(dd);
+    const filename = dateToYYYYMMDD(match.TrainingDate) + "_" + match.teamA.Name + "_vs_" + match.teamB.Name + ".vss"
+    saveToPC(fileData, filename)
+  }
 
   const onDoFilters = () => {
     setAllFilters({
@@ -289,6 +324,22 @@ function VideoStatsVert() {
         <label htmlFor="modal-filters" className="btn btn-sm btn-secondary">
           Filters
         </label>
+        <button
+          className="btn btn-sm btn-secondary ml-2"
+          onClick={() => onExport()}
+        >
+          Export
+        </button>
+        <div className="dropdown">
+        <label tabIndex={0} className="btn btn-sm btn-secondary ml-2">Report</label>
+        <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+          {
+            vertObjects.map((vobj, idx) => (
+              <li key={idx} onClick={() => onReport(vobj)}><a>{vobj.selectPlayer.FirstName} {vobj.selectPlayer.LastName}</a></li>
+            ))
+          }
+        </ul>
+      </div>
         <button
           className="btn btn-sm btn-secondary ml-2"
           onClick={() => onSynchVideo()}

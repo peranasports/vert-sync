@@ -219,3 +219,39 @@ export function replaceItemInArray(a, oldItem, newItem)
     }
 }
   
+export function saveToPC(fileData, filename) 
+{
+    // const fileData = JSON.stringify(contactsData);
+    const blob = new Blob([fileData], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.download = filename //bowlingObject.activityName + ".vss";
+    link.href = url;
+    link.click();
+  };
+
+export function dateToYYYYMMDD(dt)
+{
+    const zeroPad = (num, places) => String(num).padStart(places, '0')
+
+    return dt.getFullYear().toString() + zeroPad((dt.getMonth() + 1), 2) + zeroPad(dt.getDate(), 2);
+}
+
+export function dateToString(dt)
+{
+    const zeroPad = (num, places) => String(num).padStart(places, '0')
+
+    return zeroPad(dt.getDate(), 2) + "/"  + zeroPad((dt.getMonth() + 1), 2) + "/" + dt.getFullYear().toString();
+}
+
+export function matchScoresString(match)
+{
+    var s = match.HomeScore + "-" + match.AwayScore + " ("
+    for (var nd=0; nd<match.sets.length; nd++)
+    {
+        if (nd > 0) s += ", "
+        s += match.sets[nd].HomeScore + "-" + match.sets[nd].AwayScore
+    }
+    s += ")"
+    return s
+}
