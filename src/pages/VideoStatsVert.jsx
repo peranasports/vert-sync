@@ -93,7 +93,7 @@ function VideoStatsVert() {
     setSelectedEvent(ev);
     if (ev.VideoPosition !== 0)
     {
-      playerRef.current.seekTo(ev.VideoPosition, "seconds");
+      playerRef.current.seekTo(ev.VideoPosition - 3, "seconds");
     }
     else
     {
