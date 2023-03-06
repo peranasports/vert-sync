@@ -1,3 +1,5 @@
+import { standardDeviation } from "./Utils";
+
 export function initWithJumpObjects(objs)
 {
     var self = {
@@ -166,9 +168,9 @@ export function initWithJumpObjects(objs)
             self.allJumpNonActionMax = vertinches > self.allJumpNonActionMax ? vertinches : self.allJumpNonActionMax;
         }
     }
-    self.spikeJumpStandardDeviation = aspikes.count == 0 ? 0 : aspikes.standardDeviation
-    self.setJumpStandardDeviation = asets.count == 0 ? 0 : asets.standardDeviation
-    self.blockJumpStandardDeviation = ablocks.count == 0 ? 0 : ablocks.standardDeviation
-    self.serveJumpStandardDeviation = aserves.count == 0 ? 0 : aserves.standardDeviation
+    self.spikeJumpStandardDeviation = aspikes.length == 0 ? 0 : standardDeviation(aspikes)
+    self.setJumpStandardDeviation = asets.length == 0 ? 0 : standardDeviation(asets)
+    self.blockJumpStandardDeviation = ablocks.length == 0 ? 0 : standardDeviation(ablocks)
+    self.serveJumpStandardDeviation = aserves.length == 0 ? 0 : standardDeviation(aserves)
     return self
 }

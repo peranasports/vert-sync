@@ -377,7 +377,7 @@ function bestFitTimesForPlayer(vpo, threshold)
             // if found all then piss off
             if (count == spikeEvents.length)
             {
-                const jumpstartdatetime = new Date(firstEvent.TimeStamp.getTime() - starttime);
+                const jumpstartdatetime = new Date(firstEvent.TimeStamp.getTime() - starttime * 1000);
                 vpo.vertStartTime = jumpstartdatetime;
                 vpo.threshold = threshold;
                 // NSLog(@"jumpstartdatetime = %@", jumpstartdatetime);
@@ -409,11 +409,11 @@ function bestFitTimesForPlayer(vpo, threshold)
         var vio = vertjumps[vj]
         if (vio.event != null)
         {
-            const dt = new Date(vio.event.TimeStamp.getTime() - vio.timesecs);
+            const dt = new Date(vio.event.TimeStamp.getTime() - vio.timesecs * 1000);
             // NSLog(@"%02d %f %@", nn++, vio.timesecs, vio.event.EventDescription);
         }
     }
-    const jumpstartdatetime = new Date(firstEvent.TimeStamp.getTime() - maxstarttime);
+    const jumpstartdatetime = new Date(firstEvent.TimeStamp.getTime() - maxstarttime * 1000);
     vpo.vertStartTime = jumpstartdatetime;
     vpo.threshold = threshold;
 //    NSLog(@"max = %d/%d jumpstartdatetime = %@", maxcount, (int)spikeEvents.length, jumpstartdatetime);

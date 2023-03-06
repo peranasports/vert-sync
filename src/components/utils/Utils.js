@@ -100,34 +100,87 @@ export function tryParseDateFromString(dateStringCandidateValue, format = "ymd")
 }
 
 export function writeText(info, style = {}) {
-    const { ctx, text, x, y, width } = info;
-    const { fontSize = 20, fontFamily = 'Arial', color = 'black', textAlign = 'left', textBaseline = 'top' } = style;
-
+    const { ctx, text, x, y } = info;
+    const {
+      fontSize = 20,
+      fontFamily = "Arial",
+      fontWeight = "",
+      color = "black",
+      textAlign = "left",
+      textBaseline = "top",
+    } = style;
+  
     ctx.beginPath();
-    ctx.font = 'condensed ' + fontSize + 'px ' + fontFamily;
+    ctx.font = fontWeight + " " + fontSize + "px " + fontFamily;
     ctx.textAlign = textAlign;
     ctx.textBaseline = textBaseline;
     ctx.fillStyle = color;
     ctx.fillText(text, x, y);
     ctx.stroke();
-}
-
-export function writeTextCentre(info, style = {}) {
+  }
+  
+  export function writeTextCentre(info, style = {}) {
     const { ctx, text, x, y, width } = info;
-    const { fontFamily = 'segoe', color = 'black', textBaseline = 'top' } = style;
-
+    const {
+      fontSize = 20,
+      fontFamily = "Arial",
+      fontWeight = "",
+      color = "black",
+      textBaseline = "top",
+    } = style;
+  
     var textWidth = ctx.measureText(text).width;
-    var xx = x + (width / 2) - (textWidth / 2)
-
+    var xx = x + width / 2 - textWidth / 2;
+  
     ctx.beginPath();
-    ctx.font = info.fontsize + 'px ' + fontFamily;
-    ctx.textAlign = 'centre';
+    ctx.font = fontWeight + " " + fontSize + "px " + fontFamily;
+    ctx.textAlign = "left";
     ctx.textBaseline = textBaseline;
     ctx.fillStyle = color;
     ctx.fillText(text, xx, y);
     ctx.stroke();
-}
-
+  }
+  
+  export function writeTextWithLineBreak(info, style = {}) {
+    const { ctx, text, x, y, width, height } = info;
+    const {
+      fontSize = 20,
+      fontFamily = "Arial",
+      fontWeight = "",
+      color = "black",
+      textBaseline = "top",
+      textAlign = "left",
+    } = style;
+  
+    ctx.font = fontWeight + " " + fontSize + "px " + fontFamily;
+    ctx.textAlign = textAlign;
+    ctx.textBaseline = textBaseline;
+    ctx.fillStyle = color;
+  
+    let lines = [];
+    let lineCount = 0;
+    let tmpTxt = text.split(" ");
+    lines[lineCount] = [];
+    for(let t = 0; t < tmpTxt.length; t++){
+      lines[lineCount].push(tmpTxt[t]);
+      if(ctx.measureText(lines[lineCount].join(" "), ctx.font).width > width) {
+        let lastItem = lines[lineCount].pop();
+        lineCount++;
+        lines[lineCount] = [lastItem];
+      }
+    }
+  
+    ctx.beginPath();
+    let metrics = ctx.measureText(text, ctx.font);
+    let fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
+    const tx = (textAlign === "center") ? x + width / 2 : x
+    const ty = (textBaseline === "center") ? y + (height - fontHeight * (lineCount + 1)) / 2 : y
+    for(let l = 0; l < lines.length; l++) {
+      ctx.fillText(lines[l].join(" "), tx, ty + (l * fontHeight));
+    }
+    ctx.stroke();
+  }
+    
 export function zoneFromString(s)
 {
     var bottommidpts = [ {x: 83.33, y:183.33}, {x: 83.33, y:116.67}, {x: 50, y:116.67}, {x: 16.67, y:116.67}, {x: 16.67, y:183.33}, {x: 50, y:183.33}, {x: 16.17, y:150}, {x: 50, y:150}, {x: 83.33, y:150} ];
@@ -255,3 +308,26 @@ export function matchScoresString(match)
     s += ")"
     return s
 }
+
+export function standardDeviation(arr)
+{
+    // Creating the mean with Array.reduce
+    let mean = arr.reduce((acc, curr)=>{
+      return acc + curr
+    }, 0) / arr.length;
+     
+    // Assigning (value - mean) ^ 2 to every array item
+    arr = arr.map((k)=>{
+      return (k - mean) ** 2
+    })
+     
+    // Calculating the sum of updated array
+   let sum = arr.reduce((acc, curr)=> acc + curr, 0);
+    
+   // Calculating the variance
+   let variance = sum / arr.length
+    
+   // Returning the standard deviation
+   return Math.sqrt(sum / arr.length)
+  }
+

@@ -5,7 +5,12 @@ import EventsList from "../components/panels/EventsList";
 import VertStatsReport from "./VertStatsReport";
 import { toast } from "react-toastify";
 import Select from "react-select";
-import { saveToPC, dateToYYYYMMDD, dateToString, matchScoresString } from "../components/utils/Utils";
+import {
+  saveToPC,
+  dateToYYYYMMDD,
+  dateToString,
+  matchScoresString,
+} from "../components/utils/Utils";
 
 function VideoStatsVert() {
   const navigate = useNavigate();
@@ -18,6 +23,7 @@ function VideoStatsVert() {
     onlineVideoFileUrl,
     dvFileData,
     vertFileData,
+    player,
   } = location.state;
   const [videoUrl, setVideoUrl] = useState(null);
   const [videoName, setVideoName] = useState(null);
@@ -43,7 +49,7 @@ function VideoStatsVert() {
     { value: 6, label: "Defence" },
     { value: 1000, label: "Jump Events" },
   ];
-  const [selectedEventTypes, setSelectedEventTypes] = useState([eventTypes[0]]);
+  const [selectedEventTypes, setSelectedEventTypes] = useState([eventTypes[7]]);
   const eventResults = [
     { value: 0, label: "All Results" },
     { value: 1, label: "=" },
@@ -85,21 +91,27 @@ function VideoStatsVert() {
 
   const doSelectEvent = (ev) => {
     setSelectedEvent(ev);
-    if (startVideoTime !== null && videoOffset !== null) {
-      const secondsSinceEpoch = Math.round(ev.TimeStamp.getTime() / 1000);
-      const loc = secondsSinceEpoch - startVideoTime + videoOffset;
-      playerRef.current.seekTo(loc, "seconds");
+    if (ev.VideoPosition !== 0)
+    {
+      playerRef.current.seekTo(ev.VideoPosition, "seconds");
+    }
+    else
+    {
+      if (startVideoTime !== null && videoOffset !== null) {
+        const secondsSinceEpoch = Math.round(ev.TimeStamp.getTime() / 1000);
+        const loc = secondsSinceEpoch - startVideoTime + videoOffset;
+        playerRef.current.seekTo(loc, "seconds");
+      }
     }
   };
 
-  const onReport = (vobj) =>
-  {
+  const onReport = (vobj) => {
     const st = {
-      match:match,
+      match: match,
       vertObject: vobj,
     };
     navigate("/vertstatsreport", { state: st });
-  }
+  };
 
   const onSynchVideo = () => {
     if (selectedEvent === null) {
@@ -120,25 +132,38 @@ function VideoStatsVert() {
   };
 
   const onExport = () => {
-    var opms = []
-    for (var nn=0; nn<vertObjects.length; nn++)
-    {
-      const opm = { playerName: vertObjects[nn].playerName, selectedPlayerName: vertObjects[nn].selectPlayer.FirstName + " " + vertObjects[nn].selectPlayer.LastName}
-      opms.push(opm)
+    var opms = [];
+    for (var nn = 0; nn < vertObjects.length; nn++) {
+      const opm = {
+        playerName: vertObjects[nn].playerName,
+        selectedPlayerName:
+          vertObjects[nn].selectPlayer.FirstName +
+          " " +
+          vertObjects[nn].selectPlayer.LastName,
+      };
+      opms.push(opm);
     }
     const dd = {
-      matchDescription:match.teamA.Name + " vs " + match.teamB.Name,
-      matchDate:dateToString(match.TrainingDate),
-      matchScores:matchScoresString(match),
-      onlineVideoFileUrl:onlineVideoFileUrl === null ? "" : onlineVideoFileUrl,
-      dvFileData:dvFileData,
-      vertFileData:vertFileData,
-      matchingNames:opms,
-    }    
+      matchDescription: match.teamA.Name + " vs " + match.teamB.Name,
+      matchDate: dateToString(match.TrainingDate),
+      matchScores: matchScoresString(match),
+      teamA: match.teamA,
+      teamB: match.teamB,
+      onlineVideoFileUrl: onlineVideoFileUrl === null ? "" : onlineVideoFileUrl,
+      dvFileData: dvFileData,
+      vertFileData: vertFileData,
+      matchingNames: opms,
+    };
     const fileData = JSON.stringify(dd);
-    const filename = dateToYYYYMMDD(match.TrainingDate) + "_" + match.teamA.Name + "_vs_" + match.teamB.Name + ".vss"
-    saveToPC(fileData, filename)
-  }
+    const filename =
+      dateToYYYYMMDD(match.TrainingDate) +
+      "_" +
+      match.teamA.Name +
+      "_vs_" +
+      match.teamB.Name +
+      ".vss";
+    saveToPC(fileData, filename);
+  };
 
   const onDoFilters = () => {
     setAllFilters({
@@ -152,14 +177,14 @@ function VideoStatsVert() {
   };
 
   const doSelectSet = (idx) => {
-    setSelectedSet(idx)
-  }
-  
+    setSelectedSet(idx);
+  };
+
   useEffect(() => {
-    const vn = videoFileName !== null ? videoFileName : onlineVideoFileUrl;
+    const vn = videoFileName !== undefined && videoFileName !== null ? videoFileName : onlineVideoFileUrl;
     setVideoName(vn);
     const vu =
-      videoFileUrl === null || videoFileUrl === ""
+      videoFileUrl === null || videoFileUrl === undefined || videoFileUrl === ""
         ? onlineVideoFileUrl
         : videoFileUrl;
     setVideoUrl(vu);
@@ -168,15 +193,62 @@ function VideoStatsVert() {
     if (soffset !== null) {
       setVideoOffset(Number.parseFloat(soffset));
     }
+    
     const ssvt = localStorage.getItem(videoFileName + "_startVideoTime");
     if (ssvt !== null) {
       setStartVideoTime(Number.parseInt(ssvt));
     }
 
-    setTeamAPlayers(teamPlayersList(match.teamA));
-    setTeamBPlayers(teamPlayersList(match.teamB));
-    setSelectedTeamAPlayers([{ value: 0, label: "All Players" }]);
-    setSelectedTeamBPlayers([{ value: 0, label: "All Players" }]);
+    const tapls = teamPlayersList(match.teamA);
+    setTeamAPlayers(tapls);
+    const tbpls = teamPlayersList(match.teamB);
+    setTeamBPlayers(tbpls);
+    if (player !== undefined) {
+      var ok = false;
+      for (const tapl of tapls) {
+        if (
+          tapl.label.toLowerCase().includes(player.FirstName.toLowerCase()) &&
+          tapl.label.toLowerCase().includes(player.LastName.toLowerCase())
+        ) {
+          setSelectedTeamAPlayers([tapl]);
+          setSelectedTeamBPlayers([]);
+          setAllFilters({
+            teamAPlayers: [tapl],
+            teamBPlayers: [],
+            eventTypes: selectedEventTypes,
+            eventResults: selectedEventResults,
+            jumpHeights: selectedJumpHeights,
+            landingImpacts: selectedLandingImpacts,
+          });
+          ok = true;
+          break;
+        }
+      }
+      if (ok === false) {
+        for (const tbpl of tbpls) {
+          if (
+            tbpl.label.toLowerCase().includes(player.FirstName.toLowerCase()) &&
+            tbpl.label.toLowerCase().includes(player.LastName.toLowerCase())
+          ) {
+            setSelectedTeamBPlayers([tbpl]);
+            setSelectedTeamAPlayers([]);
+            ok = true;
+            setAllFilters({
+              teamAPlayers: [],
+              teamBPlayers: [tbpl],
+              eventTypes: selectedEventTypes,
+              eventResults: selectedEventResults,
+              jumpHeights: selectedJumpHeights,
+              landingImpacts: selectedLandingImpacts,
+            });
+            break;
+          }
+        }
+      }
+    } else {
+      setSelectedTeamAPlayers([{ value: 0, label: "All Players" }]);
+      setSelectedTeamBPlayers([{ value: 0, label: "All Players" }]);
+    }
   }, []);
 
   function handleSelectEventTypes(data) {
@@ -299,8 +371,17 @@ function VideoStatsVert() {
       const pl = team.players[np];
       const plname =
         pl.isVert === false
-          ? pl.shirtNumber + ", " + pl.LastName.toUpperCase()
-          : pl.shirtNumber + ". " + pl.LastName.toUpperCase() + " (v)";
+          ? pl.shirtNumber +
+            ". " +
+            pl.FirstName +
+            " " +
+            pl.LastName.toUpperCase()
+          : pl.shirtNumber +
+            ". " +
+            pl.FirstName +
+            " " +
+            pl.LastName.toUpperCase() +
+            " (v)";
       pls.push({ value: np + 1, label: plname, guid: pl.Guid });
     }
     return pls;
@@ -312,62 +393,98 @@ function VideoStatsVert() {
 
   return (
     <>
-      <div className="flex justify-right">
-        <div className="btn-group mr-4">
-          {
-            match.sets.map((s, idx) =>
-            (
-              <button className={selectedSet === idx + 1 ? "btn btn-sm btn-active" : "btn btn-sm"} key={idx} onClick={() => doSelectSet(idx + 1)}>Set {idx + 1}</button>
-            ))
-          }
+      <div className="flex">
+        <div className="flex-col w-80">
+          <div className="btn-group  mr-4">
+            {match.sets.map((s, idx) => (
+              <button
+                className={
+                  selectedSet === idx + 1
+                    ? "btn btn-sm bg-gray-600 hover:btn-gray-900 btn-active"
+                    : "btn btn-sm bg-gray-600 hover:btn-gray-900"
+                }
+                key={idx}
+                onClick={() => doSelectSet(idx + 1)}
+              >
+                Set {idx + 1}
+              </button>
+            ))}
+          </div>
+          <div className="flex h-[40vw] mt-4">
+            <div className="flex-col w-[60vh] h-90 overflow-y-auto">
+              <EventsList
+                match={match}
+                filters={allFilters}
+                selectedSet={selectedSet}
+                doSelectEvent={(ev) => doSelectEvent(ev)}
+              />
+            </div>
+          </div>
         </div>
-        <label htmlFor="modal-filters" className="btn btn-sm btn-secondary">
-          Filters
-        </label>
-        <button
-          className="btn btn-sm btn-secondary ml-2"
-          onClick={() => onExport()}
-        >
-          Export
-        </button>
-        <div className="dropdown">
-        <label tabIndex={0} className="btn btn-sm btn-secondary ml-2">Report</label>
-        <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
-          {
-            vertObjects.map((vobj, idx) => (
-              <li key={idx} onClick={() => onReport(vobj)}><a>{vobj.selectPlayer.FirstName} {vobj.selectPlayer.LastName}</a></li>
-            ))
-          }
-        </ul>
-      </div>
-        <button
-          className="btn btn-sm btn-secondary ml-2"
-          onClick={() => onSynchVideo()}
-        >
-          Synch
-        </button>
-      </div>
-      <div className="flex h-[40vw] mt-4">
-        <div className="flex-col w-[60vh] h-90 overflow-y-auto">
-          <EventsList
-            match={match}
-            filters={allFilters}
-            selectedSet={selectedSet}
-            doSelectEvent={(ev) => doSelectEvent(ev)}
-          />
+        <div className="flex-col ml-4">
+          <div className="flex justify-between">
+            <div className="flex gap-1">
+              <label
+                htmlFor="modal-filters"
+                className="btn btn-sm bg-gray-600 hover:btn-gray-900"
+              >
+                Filters
+              </label>
+              <button
+                className="btn btn-sm bg-gray-600 hover:btn-gray-900"
+                onClick={() => onExport()}
+              >
+                Export
+              </button>
+              <div className="dropdown">
+                <label tabIndex={0} className="btn btn-sm bg-gray-600 hover:btn-gray-900">
+                  Report
+                </label>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+                >
+                  {vertObjects.map((vobj, idx) => (
+                    <li key={idx} onClick={() => onReport(vobj)}>
+                      <a>
+                        {vobj.selectPlayer.FirstName}{" "}
+                        {vobj.selectPlayer.LastName}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <button
+                className="btn btn-sm bg-gray-600 hover:btn-gray-900"
+                onClick={() => onSynchVideo()}
+              >
+                Synch Video
+              </button>
+            </div>
+            <div className="mx-2 flex-col">
+              <div className="text-sm text-right text-warning font-semibold">
+                {match.teamA.Name.toUpperCase()} vs{" "}
+                {match.teamB.Name.toUpperCase()}
+              </div>
+              <div className="text-sm text-right">
+                {dateToString(match.TrainingDate)}
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-center w-full">
+            <ReactPlayer
+              ref={playerRef}
+              url={videoUrl}
+              playing={true}
+              width="100%"
+              height="100%"
+              controls={true}
+              onReady={() => playerReady()}
+            />
+          </div>
         </div>
-        <div className="flex justify-center w-full">
-          <ReactPlayer
-            ref={playerRef}
-            url={videoUrl}
-            playing={true}
-            width="100%"
-            height="100%"
-            controls={true}
-            onReady={() => playerReady()}
-          />
-        </div>
       </div>
+
       <input type="checkbox" id="modal-filters" className="modal-toggle" />
       <div className="modal">
         <div className="modal-box w-7/12 max-w-5xl h-full">

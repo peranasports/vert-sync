@@ -8,7 +8,6 @@ function Navbar({ title }) {
         <div className='container mx-auto'>
             <div className='flex px-2 mx-2 space-x-4'>
                 <img className='pt-1 h-10 w-10' alt='' src={VertLogo} />
-                <img className='pt-1 h-10 w-10' alt='' src={PSLogo} />
                 <Link to='/' className='text-2xl pt-1 font-bold align-middle'>
                     {title}
                 </Link>
@@ -18,17 +17,23 @@ function Navbar({ title }) {
                     <Link to='/' className='btn btn-ghost btn-sm rounded-btn'>
                         Home
                     </Link>
+                    <Link to='/importpackages' className='btn btn-ghost btn-sm rounded-btn'>
+                        Import
+                    </Link>
                     <Link to='/about' className='btn btn-ghost btn-sm rounded-btn'>
                         About
                     </Link>
                 </div>
+            </div>
+            <div>
+            <img className='pt-1 h-10 w-10' alt='' src={PSLogo} />
             </div>
         </div>
     </nav>
 }
 
 Navbar.defaultProps = {
-    title: 'VERT/Stats/Video Sync'
+    title: 'VERT - Stats - Video Sync'
 }
 
 Navbar.PropsType = {
