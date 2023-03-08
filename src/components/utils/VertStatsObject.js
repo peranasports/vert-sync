@@ -21,6 +21,9 @@ export function initWithJumpObjects(objs)
         spikeJumpErrorAverage:0,
         spikeJumpBlockedAverage:0,
         spikeEfficiency:0,
+        spikeLandingPeakGSTotal:0,
+        spikeLandingStressTotal:0,
+        spikeLandingCountTotal:0,
         blockJumpTotal:0,
         blockJumpKillTotal:0,
         blockJumpMaximum:0,
@@ -29,6 +32,9 @@ export function initWithJumpObjects(objs)
         blockJumpAverage:0,
         blockJumpStandardDeviation:0,
         blockJumpKillAverage:0,
+        blockLandingPeakGSTotal:0,
+        blockLandingStressTotal:0,
+        blockLandingCountTotal:0,
         serveJumpTotal:0,
         serveJumpKillTotal:0,
         serveJumpErrorTotal:0,
@@ -40,12 +46,18 @@ export function initWithJumpObjects(objs)
         serveJumpStandardDeviation:0,
         serveJumpKillAverage:0,
         serveJumpErrorAverage:0,
+        serveLandingPeakGSTotal:0,
+        serveLandingStressTotal:0,
+        serveLandingCountTotal:0,
         setJumpTotal:0,
         setJumpMaximum:0,
         setJumpCountTotal:0,
         setCountTotal:0,
         setJumpAverage:0,
         setJumpStandardDeviation:0,
+        setLandingPeakGSTotal:0,
+        setLandingStressTotal:0,
+        setLandingCountTotal:0,
         allJumpMax:0,
         allJumpTotal:0,
         allJumpCountTotal:0,
@@ -118,6 +130,12 @@ export function initWithJumpObjects(objs)
                     self.spikeCountBlockedTotal++;
                     self.spikeJumpBlockedTotal += vertinches;
                 }
+                if (viobj.landingpeakgs !== undefined && viobj.landingstress !== undefined)
+                {
+                    self.spikeLandingStressTotal += viobj.landingstress;
+                    self.spikeLandingPeakGSTotal += viobj.landingpeakgs;
+                    self.spikeLandingCountTotal++;
+                }        
             }
             else if (obj.event.EventType === 5)
             {
@@ -130,7 +148,13 @@ export function initWithJumpObjects(objs)
                     self.blockCountKillTotal++;
                     self.blockJumpKillTotal += vertinches;
                 }
-            }
+                if (viobj.landingpeakgs !== undefined && viobj.landingstress !== undefined)
+                {
+                    self.blockLandingStressTotal += viobj.landingstress;
+                    self.blockLandingPeakGSTotal += viobj.landingpeakgs;
+                    self.blockLandingCountTotal++;
+                }
+                    }
             else if (obj.event.EventType === 1)
             {
                 aserves.push(vertinches);
@@ -147,7 +171,13 @@ export function initWithJumpObjects(objs)
                     self.serveCountErrorTotal++;
                     self.serveJumpErrorTotal += vertinches;
                 }
-            }
+                if (viobj.landingpeakgs !== undefined && viobj.landingstress !== undefined)
+                {
+                    self.serveLandingStressTotal += viobj.landingstress;
+                    self.serveLandingPeakGSTotal += viobj.landingpeakgs;
+                    self.serveLandingCountTotal++;
+                }
+                    }
             else if (obj.event.EventType === 3 || obj.event.EventType === 20)
             {
                 if (vertinches > setjump)
@@ -159,6 +189,12 @@ export function initWithJumpObjects(objs)
 // count separately
 //                setCountTotal++;
                 self.setJumpTotal += vertinches;
+                if (viobj.landingpeakgs !== undefined && viobj.landingstress !== undefined)
+                {
+                    self.setLandingStressTotal += viobj.landingstress;
+                    self.setLandingPeakGSTotal += viobj.landingpeakgs;
+                    self.setLandingCountTotal++;
+                }
             }
         }
         else

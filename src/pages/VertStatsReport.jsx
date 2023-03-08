@@ -191,6 +191,16 @@ function VertStatsReport() {
                 </th>
               ))}
             </tr>
+            <tr>
+            <th>Spike Jump Landing Impact</th>
+              {vertObject.statsObjects.map((vobj, idx) => (
+                <th>
+                    <p className={landingTextColour(vobj.spikeLandingPeakGSTotal, vobj.spikeLandingCountTotal)}>
+                    {averageString(vobj.spikeLandingPeakGSTotal, vobj.spikeLandingCountTotal)}
+                    </p>
+                </th>
+              ))}
+            </tr>
             <tr><th className="font-light text-warning">BLOCKING</th></tr>
             <tr>
               <th>Block Jump Average</th>
@@ -222,6 +232,16 @@ function VertStatsReport() {
                   {vobj.blockJumpStandardDeviation === undefined
                     ? "-"
                     : vobj.blockJumpStandardDeviation.toFixed(1)}
+                </th>
+              ))}
+            </tr>
+            <tr>
+            <th>Block Jump Landing Impact</th>
+              {vertObject.statsObjects.map((vobj, idx) => (
+                <th>
+                    <p className={landingTextColour(vobj.blockLandingPeakGSTotal, vobj.blockLandingCountTotal)}>
+                    {averageString(vobj.blockLandingPeakGSTotal, vobj.blockLandingCountTotal)}
+                    </p>
                 </th>
               ))}
             </tr>
@@ -270,6 +290,16 @@ function VertStatsReport() {
                 </th>
               ))}
             </tr>
+            <tr>
+            <th>Serve Jump Landing Impact</th>
+              {vertObject.statsObjects.map((vobj, idx) => (
+                <th>
+                    <p className={landingTextColour(vobj.serveLandingPeakGSTotal, vobj.serveLandingCountTotal)}>
+                    {averageString(vobj.serveLandingPeakGSTotal, vobj.serveLandingCountTotal)}
+                    </p>
+                </th>
+              ))}
+            </tr>
             <tr><th className="font-light text-warning">SETTING</th></tr>
             <tr>
               <th>Set Jump Average</th>
@@ -301,6 +331,16 @@ function VertStatsReport() {
                       vobj.setJumpCountTotal +
                       " / " +
                       vobj.setJumpCountTotal}
+                </th>
+              ))}
+            </tr>
+            <tr>
+            <th>All Jump Landing Impact</th>
+              {vertObject.statsObjects.map((vobj, idx) => (
+                <th>
+                    <p className={landingTextColour(vobj.setLandingPeakGSTotal, vobj.setLandingCountTotal)}>
+                    {averageString(vobj.setLandingPeakGSTotal, vobj.setLandingCountTotal)}
+                    </p>
                 </th>
               ))}
             </tr>
