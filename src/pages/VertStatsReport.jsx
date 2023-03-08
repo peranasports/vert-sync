@@ -335,7 +335,7 @@ function VertStatsReport() {
               ))}
             </tr>
             <tr>
-            <th>All Jump Landing Impact</th>
+            <th>Set Jump Landing Impact</th>
               {vertObject.statsObjects.map((vobj, idx) => (
                 <th>
                     <p className={landingTextColour(vobj.setLandingPeakGSTotal, vobj.setLandingCountTotal)}>
